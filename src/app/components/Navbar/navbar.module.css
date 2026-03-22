@@ -1,0 +1,75 @@
+.navbar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 95%;
+  max-width: 600px;
+  padding: 12px 20px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+
+  border-radius: 40px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+
+  font-weight: 500;
+  z-index: 1000;
+}
+
+/* 🔹 Links */
+.navbar a {
+  text-decoration: none;
+  color: white;
+  position: relative;
+  padding: 8px 14px;
+  border-radius: 20px;
+
+  transition: all 0.3s ease;
+}
+
+/* 🔥 Hover Effect (Zoom + Glow) */
+.navbar a:hover {
+  transform: scale(1.2); /* 🔍 zoom */
+  
+  background: rgba(255, 255, 255, 0.1);
+
+  box-shadow: 
+    0 0 10px rgba(255,255,255,0.6),
+    0 0 20px rgba(255,255,255,0.4),
+    0 0 30px rgba(255,255,255,0.2);
+
+  color: #fff;
+}
+
+/* 🔥 Active Click Effect */
+.navbar a:active {
+  transform: scale(1.05);
+}
+
+/* 📱 Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    padding: 14px 0;
+
+    justify-content: space-evenly;
+
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .navbar a:hover {
+    transform: scale(1.1); /* mobile में थोड़ा कम zoom */
+  }
+}

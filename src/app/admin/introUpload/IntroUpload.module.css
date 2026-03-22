@@ -1,0 +1,155 @@
+.dashboardContainer {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+  padding: 40px;
+  background: #0a0f12;
+  min-height: 100vh;
+  color: white;
+  font-family: sans-serif;
+}
+
+.title {
+  color: #00ffcc;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.card, .previewCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 204, 0.2);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.inputField {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: white;
+}
+
+.primaryBtn, .secondaryBtn {
+  background: #00ffcc;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  background: rgba(0, 255, 204, 0.1);
+  border: 1px solid #00ffcc;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.imgWrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.thumb {
+  object-fit: cover;
+}
+
+
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 255, 204, 0.1);
+  border: 1px solid #00ffcc;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.delBtn {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.imgWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.delImgBtn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 0, 0, 0.7);
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 5px;
+  font-size: 12px;
+}
+
+
+
+
+/* 🔹 स्पिनर एनीमेशन */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top: 2px solid black; /* बटन के टेक्स्ट कलर के हिसाब से */
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* बटन जब डिसेबल (Disabled) हो */
+.primaryBtn:disabled, .secondaryBtn:disabled {
+  background: #008a6e;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 900px) {
+  .dashboardContainer {
+    grid-template-columns: 1fr;
+  }
+}

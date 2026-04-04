@@ -1,20 +1,15 @@
-// lib/db.js
-import mysql from "mysql2/promise";
+import { MongoClient } from "mongodb";
 
-let connection;
+const uri = "mongodb+srv://toolsdesignwebdev_db_user:6rYz2pUGzaADRD4F@portfoliocluster.pr6iydp.mongodb.net/?appName=portfolioCluster";
 
-export async function connectDB() {
-  if (connection && connection.connection && connection.connection.state !== "disconnected") {
-    return connection; // already connected
-  }
+let client;
+let clientPromise;
 
-  connection = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-  });
-
-  console.log("✅ MySQL connected");
-  return connection;
+if (!global._mongoClientPromise) {
+  client = new MongoClient(uri);
+  global._mongoClientPromise = client.connect();
 }
+
+clientPromise = global._mongoClientPromise;
+
+export default clientPromise;

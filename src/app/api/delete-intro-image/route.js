@@ -1,26 +1,67 @@
 import { NextResponse } from "next/server";
-// import { v2 as cloudinary } from "cloudinary"; // अगर Cloudinary यूज़ कर रहे हैं
+import clientPromise from "@/lib/db";
+import { ObjectId } from "mongodb";
+import ImageKit from "imagekit";
+
+// 🔥 ImageKit config
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
 
 export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    const public_id = searchParams.get("public_id"); // Cloudinary के लिए ज़रूरी
 
     if (!id) {
-      return NextResponse.json({ success: false, message: "ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "ID is required" },
+        { status: 400 }
+      );
     }
 
-    // 1️⃣ स्टेप: Storage से फाइल डिलीट करें (Optional)
-    // if (public_id) {
-    //   await cloudinary.uploader.destroy(public_id);
-    // }
+    // ✅ DB connect
+    const client = await clientPromise;
+    const db = client.db("portfolio");
 
-    // 2️⃣ स्टेप: Database से रिकॉर्ड डिलीट करें
-    // await db.image.delete({ where: { id: id } });
+    // 🔥 1. पहले data निकालो
+    const imageDoc = await db.collection("heading_images").findOne({
+      _id: new ObjectId(id),
+    });
 
-    return NextResponse.json({ success: true, message: "Image deleted from DB & Storage" });
+    if (!imageDoc) {
+      return NextResponse.json(
+        { success: false, message: "Image not found" },
+        { status: 404 }
+      );
+    }
+
+    // 🔥 IMPORTANT: तुमने save करते time ये field रखनी चाहिए
+    // imageDoc.fileId (ImageKit का fileId)
+
+    // 🔥 2. ImageKit से delete
+    if (imageDoc.fileId) {
+      await imagekit.deleteFile(imageDoc.fileId);
+    }
+
+    // 🔥 3. MongoDB से delete
+    await db.collection("heading_images").deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Image deleted from ImageKit + DB ✅",
+    });
+
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    console.error("DELETE ERROR:", error);
+
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
   }
 }

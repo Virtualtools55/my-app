@@ -1,22 +1,44 @@
 import { NextResponse } from "next/server";
-// import { db } from "@/lib/db"; // अपने Database कनेक्शन को यहाँ इम्पोर्ट करें
+import clientPromise from "@/lib/db";
+import { ObjectId } from "mongodb"; // 🔥 MUST
 
-export async function DELETE(request) {
+export async function DELETE(req) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ success: false, message: "ID is required" }, { status: 400 });
+      return NextResponse.json({
+        success: false,
+        message: "ID required",
+      });
     }
 
-    // 🔹 Database से डिलीट करने का असली कोड यहाँ आएगा
-    // await db.heading.delete({ where: { id: id } });
+    const client = await clientPromise;
+    const db = client.db("portfolio"); // 🔥 वही DB जो add में use की थी
 
-    console.log(`Heading with ID ${id} deleted successfully`);
+    const result = await db.collection("headings_text").deleteOne({
+      _id: new ObjectId(id), // 🔥 MOST IMPORTANT
+    });
 
-    return NextResponse.json({ success: true, message: "Heading deleted" });
+    if (result.deletedCount === 0) {
+      return NextResponse.json({
+        success: false,
+        message: "Heading not found",
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Heading deleted successfully",
+    });
+
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    console.error("DELETE HEADING ERROR:", error); // 🔥 console check करो
+
+    return NextResponse.json({
+      success: false,
+      message: "Server error",
+    });
   }
 }

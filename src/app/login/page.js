@@ -10,11 +10,12 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
 
-    const res = await fetch("/api/login_authentication", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+  const res = await fetch("/api/login_authentication", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // 🔥 यही missing था
+    body: JSON.stringify({ email, password }),
+  });
 
     if (res.ok) {
       router.push("/admin");

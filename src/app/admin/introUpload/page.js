@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./IntroUpload.module.css";
 import Image from "next/image";
 
@@ -10,28 +10,48 @@ export default function IntroUpload() {
   const [headings, setHeadings] = useState([]);
   const [imagesList, setImagesList] = useState([]);
   const [message, setMessage] = useState("");
-  
-  // 🔹 लोडिंग स्टेट (Loading State)
-  const [isUploading, setIsUploading] = useState(false);
 
-  // 🔹 डेटा फेच करने का फंक्शन
+  const timerRef = useRef(null); // 🔥 timer store करने के लिए
+
+  // 🔥 reusable message function
+  const showMessage = (msg) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    setMessage(msg);
+
+    timerRef.current = setTimeout(() => {
+      setMessage("");
+    }, 5000);
+  };
+
+  const [isHeadingUploading, setIsHeadingUploading] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
+  const isImageExist = imagesList.length > 0;
+
   const fetchData = async () => {
     try {
       const res1 = await fetch("/api/get_intro_headings");
       const data1 = await res1.json();
-      
+
       const res2 = await fetch("/api/get_intro_images");
       const data2 = await res2.json();
 
-      // डेटा को स्टेट में सेट करना (Check if data exists)
+      if (!res1.ok || !data1.success) {
+        throw new Error("Heading fetch failed");
+      }
+
+      if (!res2.ok || !data2.success) {
+        throw new Error("Image fetch failed");
+      }
+
       setHeadings(data1.headings || []);
       setImagesList(data2.data || []);
-      
-      console.log("Headings Loaded:", data1.headings);
-      console.log("Images Loaded:", data2.data);
     } catch (err) {
       console.error("Fetch Error:", err);
-      setMessage("डेटा लोड करने में समस्या आई ❌");
+      showMessage("डेटा लोड करने में समस्या आई ❌");
     }
   };
 
@@ -39,12 +59,16 @@ export default function IntroUpload() {
     fetchData();
   }, []);
 
-  // 🔹 1. Heading Submit
+  // ✅ Heading Submit
   const handleHeadingSubmit = async (e) => {
     e.preventDefault();
-    if (!text) return setMessage("Text लिखें ❌");
 
-    setIsUploading(true);
+    if (!text.trim()) {
+      return showMessage("Text लिखें ❌");
+    }
+
+    setIsHeadingUploading(true);
+
     try {
       const res = await fetch("/api/add-heading", {
         method: "POST",
@@ -53,24 +77,33 @@ export default function IntroUpload() {
       });
 
       const data = await res.json();
+
       if (data.success) {
-        setMessage("Heading added successfully ✅");
+        showMessage("Heading added successfully ✅");
         setText("");
-        fetchData(); // लिस्ट रिफ्रेश करें
+        fetchData();
+      } else {
+        showMessage("Heading add failed ❌");
       }
     } catch (err) {
-      setMessage("Error adding heading ❌");
+      showMessage("Error adding heading ❌");
     } finally {
-      setIsUploading(false);
+      setIsHeadingUploading(false);
     }
   };
 
-  // 🔹 2. Image Submit
+  // ✅ Image Submit
   const handleImageSubmit = async (e) => {
     e.preventDefault();
-    if (!image) return setMessage("इमेज चुनें ❌");
 
-    setIsUploading(true);
+    if (isImageExist) {
+      return showMessage("केवल 1 इमेज ही अपलोड कर सकते हैं ❌");
+    }
+
+    if (!image) return showMessage("इमेज चुनें ❌");
+
+    setIsImageUploading(true);
+
     const formData = new FormData();
     formData.append("image", image);
 
@@ -81,126 +114,179 @@ export default function IntroUpload() {
       });
 
       const data = await res.json();
+
       if (data.success) {
-        setMessage("Image uploaded successfully ✅");
+        showMessage("Image uploaded successfully ✅");
         setImage(null);
-        fetchData(); // लिस्ट रिफ्रेश करें
+        fetchData();
+      } else {
+        showMessage("Upload failed ❌");
       }
     } catch (err) {
-      setMessage("Error uploading image ❌");
+      showMessage("Error uploading image ❌");
     } finally {
-      setIsUploading(false);
+      setIsImageUploading(false);
     }
   };
 
-  // 🔹 3. Delete Heading
-  const deleteHeading = async (id) => {
+  // ✅ Delete Heading
+  const deleteHeading = async (_id) => {
     if (!confirm("क्या आप इसे डिलीट करना चाहते हैं?")) return;
+
     try {
-      const res = await fetch(`/api/delete-heading?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/delete-intro-heading?id=${_id}`, {
+        method: "DELETE",
+      });
+
       const data = await res.json();
+
       if (data.success) {
-        setMessage("Deleted! 🗑️");
+        showMessage("Heading deleted 🗑️");
         fetchData();
+      } else {
+        showMessage("Delete failed ❌");
       }
     } catch (err) {
-      setMessage("Delete failed ❌");
+      showMessage("Delete failed ❌");
     }
   };
 
-  // 🔹 4. Delete Image
-  const deleteImage = async (id) => {
+  // ✅ Delete Image
+  const deleteImage = async (_id) => {
     if (!confirm("क्या आप इस इमेज को डिलीट करना चाहते हैं?")) return;
+
     try {
-      const res = await fetch(`/api/delete-intro-image?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/delete-intro-image?id=${_id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("API failed");
+      }
+
       const data = await res.json();
+
       if (data.success) {
-        setMessage("Image deleted! 🗑️");
+        showMessage("Image deleted! 🗑️");
         fetchData();
+      } else {
+        showMessage("Delete failed ❌");
       }
     } catch (err) {
-      setMessage("Delete failed ❌");
+      console.error(err);
+      showMessage("Delete failed ❌");
     }
   };
 
   return (
     <div className={styles.dashboardContainer}>
-      
-      {/* 🔹 LEFT SIDE: FORMS */}
       <div className={styles.formSection}>
         <h2 className={styles.title}>Admin Panel</h2>
-        
+
         <div className={styles.card}>
           <h3>Add New Heading</h3>
           <form onSubmit={handleHeadingSubmit} className={styles.formGroup}>
-            <input 
-              type="text" 
-              value={text} 
-              onChange={(e) => setText(e.target.value)} 
-              className={styles.inputField} 
-              placeholder="Ex: Web Developer"
-              disabled={isUploading}
+            <input
+              type="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className={styles.inputField}
+              disabled={isHeadingUploading}
             />
-            <button type="submit" className={styles.primaryBtn} disabled={isUploading}>
-              {isUploading ? <span className={styles.spinner}></span> : "Add"}
+
+            <button
+              type="submit"
+              className={styles.primaryBtn}
+              disabled={isHeadingUploading}
+            >
+              {isHeadingUploading ? (
+                <span className={styles.spinner}></span>
+              ) : (
+                "Add"
+              )}
             </button>
           </form>
         </div>
 
         <div className={styles.card}>
           <h3>Upload Image</h3>
+
           <form onSubmit={handleImageSubmit} className={styles.formGroup}>
-            <input 
-              type="file" 
-              onChange={(e) => setImage(e.target.files[0])} 
-              className={styles.fileInput} 
-              disabled={isUploading}
+            <input
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+              className={styles.fileInput}
+              disabled={isImageUploading || isImageExist}
             />
-            <button type="submit" className={styles.secondaryBtn} disabled={isUploading}>
-              {isUploading ? <span className={styles.spinner}></span> : "Upload"}
+
+            <button
+              type="submit"
+              className={styles.secondaryBtn}
+              disabled={isImageUploading || isImageExist}
+            >
+              {isImageUploading ? (
+                <span className={styles.spinner}></span>
+              ) : isImageExist ? (
+                "Only 1 Image Allowed"
+              ) : (
+                "Upload"
+              )}
             </button>
           </form>
         </div>
-        
+
         {message && <p className={styles.statusMsg}>{message}</p>}
       </div>
 
-      {/* 🔹 RIGHT SIDE: LIVE CONTENT PREVIEW */}
       <div className={styles.previewSection}>
         <h2 className={styles.title}>Live Content</h2>
 
-        {/* Headings List */}
         <div className={styles.previewCard}>
           <h3>Headings ({headings.length})</h3>
+
           <div className={styles.tagContainer}>
-            {headings.map((h, index) => (
-              <div key={h.id || index} className={styles.tag}>
-                <span>{h.text}</span>
-                <button onClick={() => deleteHeading(h.id)} className={styles.delBtn}>×</button>
-              </div>
-            ))}
+            {headings.length > 0 ? (
+              headings.map((h) => (
+                <div key={h._id} className={styles.tag}>
+                  <span>{h.text}</span>
+                  <button
+                    type="button"
+                    onClick={() => deleteHeading(h._id)}
+                    className={styles.delBtn}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p>No headings found</p>
+            )}
           </div>
         </div>
 
-        {/* Image Gallery */}
         <div className={styles.previewCard}>
           <h3>Gallery ({imagesList.length})</h3>
           <div className={styles.imageGrid}>
             {imagesList.map((img, index) => (
-              <div key={img.id || index} className={styles.imgWrapper}>
-                <Image 
-                  src={img.image_url} 
-                  alt="portfolio" 
-                  fill 
-                  className={styles.thumb} 
+              <div key={img._id || index} className={styles.imgWrapper}>
+                <Image
+                  src={img.image_url}
+                  alt="portfolio"
+                  fill
+                  className={styles.thumb}
                 />
-                <button onClick={() => deleteImage(img.id)} className={styles.delImgBtn}>🗑️</button>
+                <button
+                  type="button"
+                  onClick={() => deleteImage(img._id)}
+                  className={styles.delImgBtn}
+                >
+                  🗑️
+                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
-
     </div>
   );
 }

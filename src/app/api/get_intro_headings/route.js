@@ -1,27 +1,18 @@
 import { NextResponse } from "next/server";
-import mysql from "mysql2/promise";
+import clientPromise from "@/lib/db";
 
-// DB Connection Function
-async function getDBConnection() {
-  return mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-  });
-}
-
-//  GET API
 export async function GET() {
   try {
-    const db = await getDBConnection();
+    // DB Connection
+    const client = await clientPromise;
+    const db = client.db("portfolio");
 
-    // Headings Fetch
-    const [rows] = await db.execute(
-      "SELECT id, text FROM intro_headings ORDER BY id DESC"
-    );
-
-    await db.end();
+    // Headings Fetch (MongoDB)
+    const rows = await db
+      .collection("headings_text")
+      .find({})
+      .sort({ _id: -1 }) // latest first (id DESC जैसा)
+      .toArray();
 
     return NextResponse.json({
       success: true,

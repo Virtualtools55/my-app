@@ -1,25 +1,14 @@
 import { NextResponse } from "next/server";
-import mysql from "mysql2/promise";
+import clientPromise from "@/lib/db";
 import ImageKit from "imagekit";
 
-// 🔹 ImageKit Setup
+// 🔹 ImageKit Configuration
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
-// 🔹 MySQL Connection
-async function getDBConnection() {
-  return mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-  });
-}
-
-// 🔹 POST API
 export async function POST(req) {
   try {
     const formData = await req.formData();
@@ -27,42 +16,56 @@ export async function POST(req) {
 
     if (!file) {
       return NextResponse.json(
-        { success: false, message: "No file uploaded" },
+        { success: false, message: "No file found in request" },
         { status: 400 }
       );
     }
 
-    // Convert file to buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    // 1. File को Buffer में बदलें (ImageKit के लिए)
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
-    // Upload to ImageKit
-    const result = await imagekit.upload({
-      file: buffer,
-      fileName: file.name,
-      folder: "/portfolio_intro",
+    // 2. ImageKit पर Specific Folder में अपलोड करें
+    const uploadResponse = await imagekit.upload({
+      file: buffer, // Required
+      fileName: file.name || "upload.jpg", // Required
+      folder: "/portfolio_intro", // यहाँ आपका फोल्डर नाम (Path) आएगा
+      useUniqueFileName: true, // ताकी एक ही नाम की फाइल्स आपस में न टकराएं
     });
 
-    const imageUrl = result.url;
+    const imageUrl = uploadResponse.url;
+    const fileId = uploadResponse.fileId; // भविष्य में डिलीट करने के लिए काम आता है
 
-    // Save URL to MySQL
-    const db = await getDBConnection();
-    await db.execute(
-      "INSERT INTO intro_images (image_url) VALUES (?)",
-      [imageUrl]
-    );
-    await db.end();
+    // 3. MongoDB Connection
+    // नोट: यहाँ await clientPromise का उपयोग करें, यह Singleton पैटर्न होना चाहिए
+    const client = await clientPromise;
+    const db = client.db("portfolio");
+
+    // 4. Database में URL और Meta Data सेव करें
+    const result = await db.collection("heading_images").insertOne({
+      image_url: imageUrl,
+      image_id: fileId, // Best practice: ID भी सेव करें ताकि बाद में ImageKit से डिलीट कर सकें
+      folder: "/portfolio_intro",
+      createdAt: new Date(),
+    });
 
     return NextResponse.json({
       success: true,
-      message: "Image uploaded successfully",
+      message: "Image stored in folder and URL saved to DB",
       url: imageUrl,
+      dbId: result.insertedId
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("UPLOAD_ERROR:", error);
+    
+    // अगर SSL एरर (Alert 80) आ रहा है, तो चेक करें कि Mongo Atlas में IP Whitelisted है या नहीं
     return NextResponse.json(
-      { success: false, message: error.message },
+      { 
+        success: false, 
+        message: "Server error during upload", 
+        details: error.message 
+      },
       { status: 500 }
     );
   }

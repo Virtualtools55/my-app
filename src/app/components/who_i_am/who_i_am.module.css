@@ -1,0 +1,109 @@
+.container {
+  padding: 40px 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* 🔥 TOP CARD */
+.topCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  padding: 30px;
+  border-radius: 20px;
+
+  background: radial-gradient(circle at top, #0f2027, #0a181e);
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+
+  transition: 0.3s;
+}
+
+.topCard:hover {
+  transform: scale(1.02);
+}
+
+/* TEXT */
+.topCard h2 {
+  font-size: 24px;
+  color: white;
+}
+
+.topCard p {
+  font-size: 14px;
+  color: #aaa;
+}
+
+/* STATS */
+.stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stats div {
+  text-align: center;
+}
+
+.stats h3 {
+  color: #00ffff;
+  font-size: 20px;
+}
+
+.stats span {
+  font-size: 12px;
+  color: #000000;
+}
+
+/* 🔥 SKILLS */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+
+  margin-top: 25px;
+}
+
+.card {
+  padding: 20px;
+  text-align: center;
+
+  border-radius: 15px;
+
+  background: radial-gradient(circle at top, #0f2027, #0a181e);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  color: white;
+  font-weight: 500;
+
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+/* 📱 MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .topCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .skills {
+    grid-template-columns: 1fr;
+  }
+}

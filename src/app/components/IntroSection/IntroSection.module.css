@@ -14,11 +14,12 @@
 /* 🔹 IMAGE DIV (The Pillar) */
 .imageDiv {
 position: relative;
-  width: 35%;  /* अपनी पसंद की चौड़ाई */
+  width: 45%;  /* अपनी पसंद की चौड़ाई */
   height: 500px; /* पिलर की ऊंचाई */
   overflow: hidden; /* ताकि इमेज पिलर से बाहर न निकले */
 align-items: center;
 justify-content: center;
+background-color: brown;
  
   border-bottom: none;
   align-self: flex-end;
@@ -123,9 +124,11 @@ justify-content: center;
   }
 
   .imageDiv {
-    width: 70%; /* Mobile par pillar ki width adjustable */
-    height: 350px;
-    margin-bottom: 0;
+    width: 85%; /* Mobile par pillar ki width adjustable */
+    
+    height: 330px;
+    margin: auto;
+    margin-bottom: 15px;
     z-index: 5;
   }
 

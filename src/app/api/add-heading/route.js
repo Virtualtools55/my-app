@@ -1,57 +1,38 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
+import clientPromise from "@/lib/db";
 
 export async function POST(req) {
-  let db;
-
   try {
-    // 1️⃣ Body parse
     const body = await req.json();
     const { text } = body;
 
-    // 2️⃣ Validation
-    if (!text || text.trim() === "") {
-      return NextResponse.json(
-        { success: false, message: "Heading text is required" },
-        { status: 400 }
-      );
+    if (!text || !text.trim()) {
+      return NextResponse.json({
+        success: false,
+        message: "Heading text is required",
+      });
     }
 
-    // 3️⃣ DB Connection
-    db = await connectDB();
+    // 🔥 Mongo connect
+    const client = await clientPromise;
+    const db = client.db("portfolio"); // 👉 DB name change कर सकते हो
 
-    // 4️⃣ Insert Query
-    const [result] = await db.execute(
-      "INSERT INTO intro_headings (text) VALUES (?)",
-      [text]
-    );
+    const result = await db.collection("headings_text").insertOne({
+      text: text.trim(),
+      createdAt: new Date(),
+    });
 
-    // 5️⃣ Inserted Data Return
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Heading added successfully",
-        data: {
-          id: result.insertId,
-          text: text
-        }
-      },
-      { status: 201 }
-    );
+    return NextResponse.json({
+      success: true,
+      data: result,
+    });
 
   } catch (error) {
-    console.error("Add Heading Error:", error);
+    console.error("API ERROR:", error);
 
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Server error",
-        error: error.message
-      },
-      { status: 500 }
-    );
-
-  } finally {
-    if (db) await db.end(); // 6️⃣ Close connection
+    return NextResponse.json({
+      success: false,
+      message: "Server Error",
+    });
   }
 }

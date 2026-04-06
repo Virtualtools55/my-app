@@ -1,16 +1,20 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
-const headingSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    required: true,
-    trim: true,
+const HeadingTextSchema = new Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+    },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { 
+    timestamps: true,
+    // 🚨 Ye line confirm karti hai ki Mongoose 'headings_text' table hi dekhe
+   
+  }
+);
 
-export default mongoose.models.Heading ||
-  mongoose.model("Heading", headingSchema);
+// FIX: models.headings_text check karo, warna model("headings_text", ...) banao
+const HeadingText = models.heading_texts || model("heading_texts", HeadingTextSchema);
+
+export default HeadingText;

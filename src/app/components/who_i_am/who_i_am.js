@@ -14,11 +14,11 @@ export default function whoiam() {
         </div>
 
         <div className={styles.stats}>
-          <div>
+          <div className={styles.state1}>
             <h3>1Y+</h3>
             <span>Experience</span>
           </div>
-          <div>
+          <div className={styles.state2}>
             <h3>10+</h3>
             <span>Projects</span>
           </div>

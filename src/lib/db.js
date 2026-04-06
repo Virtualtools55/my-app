@@ -1,15 +1,32 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
-const uri = "mongodb+srv://toolsdesignwebdev_db_user:6rYz2pUGzaADRD4F@portfoliocluster.pr6iydp.mongodb.net/?appName=portfolioCluster";
+const MONGODB_URI = process.env.MONGODB_URI;
 
-let client;
-let clientPromise;
-
-if (!global._mongoClientPromise) {
-  client = new MongoClient(uri);
-  global._mongoClientPromise = client.connect();
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI environment variable");
 }
 
-clientPromise = global._mongoClientPromise;
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
-export default clientPromise;
+async function dbConnect() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      dbName: "portfolio", // Aapka DB Name
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+      console.log("✅ MongoDB Connected to:", mongooseInstance.connection.name);
+      return mongooseInstance;
+    });
+  }
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+export default dbConnect;

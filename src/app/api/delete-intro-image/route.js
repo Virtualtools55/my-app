@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
-import { ObjectId } from "mongodb";
+import dbConnect from "@/lib/db";
+import HeadingImage from "@/model/heading_image_schema";
 import ImageKit from "imagekit";
 
-// 🔥 ImageKit config
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
@@ -16,40 +15,31 @@ export async function DELETE(request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json(
-        { success: false, message: "ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: "ID is required" }, { status: 400 });
     }
 
-    // ✅ DB connect
-    const client = await clientPromise;
-    const db = client.db("portfolio");
+    await dbConnect();
 
-    // 🔥 1. पहले data निकालो
-    const imageDoc = await db.collection("heading_images").findOne({
-      _id: new ObjectId(id),
-    });
+    // 🔥 1. Mongoose se document dhoondo
+    const imageDoc = await HeadingImage.findById(id);
 
     if (!imageDoc) {
-      return NextResponse.json(
-        { success: false, message: "Image not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: "Image not found" }, { status: 404 });
     }
 
-    // 🔥 IMPORTANT: तुमने save करते time ये field रखनी चाहिए
-    // imageDoc.fileId (ImageKit का fileId)
-
-    // 🔥 2. ImageKit से delete
+    // 🔥 2. ImageKit se delete (Agar fileId exist karti hai)
     if (imageDoc.fileId) {
-      await imagekit.deleteFile(imageDoc.fileId);
+      try {
+        await imagekit.deleteFile(imageDoc.fileId);
+      } catch (ikError) {
+        console.error("ImageKit Delete Failed:", ikError.message);
+        // Kabhi kabhi image manually delete ho jati hai, 
+        // isliye hum process ko stop nahi karenge database deletion ke liye.
+      }
     }
 
-    // 🔥 3. MongoDB से delete
-    await db.collection("heading_images").deleteOne({
-      _id: new ObjectId(id),
-    });
+    // 🔥 3. MongoDB se delete
+    await HeadingImage.findByIdAndDelete(id);
 
     return NextResponse.json({
       success: true,
@@ -57,10 +47,9 @@ export async function DELETE(request) {
     });
 
   } catch (error) {
-    console.error("DELETE ERROR:", error);
-
+    console.error("DELETE_ERROR:", error);
     return NextResponse.json(
-      { success: false, message: error.message },
+      { success: false, message: "Server error during deletion", error: error.message },
       { status: 500 }
     );
   }

@@ -1,32 +1,25 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
+import dbConnect from "@/lib/db"; 
+import Heading from "@/model/heading_text_schema";
 
 export async function GET() {
   try {
-    // DB Connection
-    const client = await clientPromise;
-    const db = client.db("portfolio");
+    await dbConnect();
 
-    // Headings Fetch (MongoDB)
-    const rows = await db
-      .collection("headings_text")
-      .find({})
-      .sort({ _id: -1 }) // latest first (id DESC जैसा)
-      .toArray();
+    // Latest data pehle laane ke liye sort use kiya hai
+    const rows = await Heading.find({}).sort({ createdAt: -1 });
+
+    console.log("Fetched Data Count:", rows.length); // Terminal mein check karein kitne aaye
 
     return NextResponse.json({
       success: true,
-      headings: rows,
-    });
+      headings: rows, // Isme _id aur text dono milenge
+    }, { status: 200 });
 
   } catch (error) {
-    console.error(error);
-
+    console.error("FETCH_HEADINGS_ERROR:", error);
     return NextResponse.json(
-      {
-        success: false,
-        message: "Error fetching headings",
-      },
+      { success: false, message: "Error fetching headings", error: error.message },
       { status: 500 }
     );
   }

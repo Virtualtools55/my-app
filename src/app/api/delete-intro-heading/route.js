@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
-import { ObjectId } from "mongodb"; // 🔥 MUST
+import dbConnect from "@/lib/db"; // Mongoose connection helper
+import Heading from "@/model/heading_text_schema";    // Aapka Heading Schema
 
 export async function DELETE(req) {
   try {
@@ -11,34 +11,35 @@ export async function DELETE(req) {
       return NextResponse.json({
         success: false,
         message: "ID required",
-      });
+      }, { status: 400 });
     }
 
-    const client = await clientPromise;
-    const db = client.db("portfolio"); // 🔥 वही DB जो add में use की थी
+    // 1. Database se connect karein
+    await dbConnect();
 
-    const result = await db.collection("headings_text").deleteOne({
-      _id: new ObjectId(id), // 🔥 MOST IMPORTANT
-    });
+    // 2. Mongoose ka findByIdAndDelete use karein
+    // Ye method internally String ID ko ObjectId mein convert kar deta hai
+    const deletedHeading = await Heading.findByIdAndDelete(id);
 
-    if (result.deletedCount === 0) {
+    if (!deletedHeading) {
       return NextResponse.json({
         success: false,
         message: "Heading not found",
-      });
+      }, { status: 404 });
     }
 
     return NextResponse.json({
       success: true,
-      message: "Heading deleted successfully",
+      message: "Heading deleted successfully from DB",
     });
 
   } catch (error) {
-    console.error("DELETE HEADING ERROR:", error); // 🔥 console check करो
+    console.error("DELETE HEADING ERROR:", error);
 
     return NextResponse.json({
       success: false,
       message: "Server error",
-    });
+      error: error.message,
+    }, { status: 500 });
   }
 }

@@ -1,0 +1,83 @@
+.adminWrapper {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: sans-serif;
+}
+
+.uploadCard {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 40px;
+}
+
+.formGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inputField {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+}
+
+.fileInputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.fileInputGroup label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.uploadBtn {
+    background: #000;
+    color: #fff;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.uploadBtn:disabled {
+    background: #666;
+}
+
+.adminItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.itemInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.miniThumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.deleteBtn {
+    background: #ffebeb;
+    color: #ff4d4d;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}

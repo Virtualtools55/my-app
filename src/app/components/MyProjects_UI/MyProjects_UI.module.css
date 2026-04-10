@@ -1,0 +1,136 @@
+/* 🔹 CONTAINER */
+.galleryContainer {
+  width: 95vw;
+  max-width: 1200px;
+  margin: auto;
+  padding: 60px 20px;
+   background: #050505; /* Solid Dark Base */
+}
+
+/* 🔹 SECTION TITLE (Same as Who I Am section) */
+.Technology {
+  height: 60px;
+  width: fit-content;
+  padding: 0 30px;
+  background: rgba(0, 255, 65, 0.1);
+  border-left: 4px solid #00ff41;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  margin: 0 0 40px 0;
+  color: #00ff41;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* 🔹 PROJECT GRID */
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Mobile: 2 Boxes */
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .projectGrid {
+    grid-template-columns: repeat(4, 1fr); /* Desktop: 4 Boxes */
+    gap: 25px;
+  }
+}
+
+/* 🔹 PROJECT CARD */
+.card {
+  position: relative;
+  height: 320px;
+  border-radius: 20px 5px 20px 5px; /* Modern asymmetrical corners */
+  overflow: hidden;
+  background: #0a0a0a;
+  text-decoration: none;
+  display: block;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: #00ff41;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+}
+
+.bgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5; /* Dark mysterious look */
+  filter: grayscale(100%);
+  transition: all 0.5s ease;
+}
+
+.card:hover .bgImage {
+  opacity: 0.8;
+  filter: grayscale(0%);
+  transform: scale(1.1);
+}
+
+/* 🔹 OVERLAY & TEXT */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end; /* Text niche rahega */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 70%);
+  padding: 20px;
+  z-index: 2;
+}
+
+/* Metadata style above title */
+.overlay::before {
+  content: "VIEW_PROJECT";
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: #00ff41;
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.card:hover .overlay::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.projectTitle {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  font-family: 'Courier New', monospace;
+}
+
+/* Loading/No Data Styling */
+.noData, .loading {
+  color: #00ff41;
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 50px;
+  font-family: 'Courier New', monospace;
+}
+
+@media (max-width: 768px) {
+  .card {
+    height: 250px;
+  }
+  .projectTitle {
+    font-size: 0.9rem;
+  }
+}

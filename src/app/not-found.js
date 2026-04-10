@@ -11,18 +11,19 @@ export default function NotFound() {
         404
       </h1>
 
-      {/* 🔹 Subtitle */}
+      {/* 🔹 Subtitle with Hacker vibe */}
       <h2 className={styles.subtitle}>
-        ACCESS DENIED
+        SYSTEM_FAILURE: PAGE_NOT_FOUND
       </h2>
 
       <p className={styles.desc}>
-        The page you are trying to reach does not exist or has been removed.
+        {`> The requested URL was not found on this server.`} <br />
+        {`> Traceback (most recent call last): 404_ERROR`}
       </p>
 
       {/* 🔥 Button */}
       <Link href="/" className={styles.btn}>
-        ⬅ RETURN HOME
+        {`[ RETURN_TO_DASHBOARD ]`}
       </Link>
 
     </div>

@@ -181,7 +181,7 @@ export default function IntroUpload() {
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.formSection}>
-        <h2 className={styles.title}>Admin Panel</h2>
+        <h2 className={styles.title}>Intro Upload</h2>
 
         <div className={styles.card}>
           <h3>Add New Heading</h3>

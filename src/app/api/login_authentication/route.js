@@ -1,50 +1,80 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
-import bcrypt from "bcryptjs"; // bcryptjs का उपयोग करना सुरक्षित है
+import dbConnect from "@/lib/db";
+import Admin from "@/model/authentication_schema";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
 
-    // 1. Database Connection
-    const client = await clientPromise;
-    const db = client.db("portfolio");
+    const { email, password } = body;
 
-    // 2. Find User
-    const user = await db.collection("admin_details").findOne({ email });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 401 });
+    // 🔥 1. Manual Validation
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "सारे field जरूरी हैं" },
+        { status: 400 }
+      );
     }
 
-    // 3. Password Verification
+    // Email format check (regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Email सही format में नहीं है" },
+        { status: 400 }
+      );
+    }
+
+    // Password length check
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "Password कम से कम 6 characters का होना चाहिए" },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
+
+    // 🔥 2. User check
+    const user = await Admin.findOne({ email });
+
+    const genericError = "ईमेल या पासवर्ड गलत है";
+
+    if (!user) {
+      return NextResponse.json({ error: genericError }, { status: 401 });
+    }
+
+    // 🔥 3. Password match
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return NextResponse.json({ error: "Wrong password" }, { status: 401 });
+      return NextResponse.json({ error: genericError }, { status: 401 });
     }
 
-    // 4. Create Response
-    const response = NextResponse.json({ 
-      success: true, 
-      message: "Logged in successfully" 
+    // 🔥 4. Success response
+    const response = NextResponse.json({
+      success: true,
+      message: "सफलतापूर्वक लॉगिन हुआ",
     });
 
-    // 5. Setting Cookie with Security
-    response.cookies.set("admin", "true", {
-      httpOnly: true, // ताकी JS से एक्सेस न हो सके (XSS सुरक्षा)
-      secure: process.env.NODE_ENV === "production", // केवल HTTPS पर काम करे
-      sameSite: "strict", // CSRF सुरक्षा के लिए
+    // 🔥 5. Cookie set
+    response.cookies.set("admin_session", "secure_token_here", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24, // 1 दिन
+      maxAge: 60 * 5, // 60 सेकंड * 5 मिनट = 300 सेकंड
     });
 
     return response;
 
   } catch (error) {
     console.error("LOGIN ERROR:", error);
+
     return NextResponse.json(
-      { error: "Internal Server Error", details: error.message }, 
+      { error: "सर्वर में समस्या है" },
       { status: 500 }
     );
   }

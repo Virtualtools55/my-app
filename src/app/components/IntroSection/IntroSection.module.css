@@ -1,138 +1,188 @@
-/* 🔹 Container */
+/* 🔹 MAIN CONTAINER */
 .container {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 30px;
-  padding: 40px;
-  background: radial-gradient(circle at top, #0f2027, #0a181e);
-  overflow: hidden;
-  position: relative;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #050505; /* Solid Dark Base */
+  overflow-x: hidden;
 }
 
-/* 🔹 IMAGE DIV (The Pillar) */
-.imageDiv {
-position: relative;
-  width: 45%;  /* अपनी पसंद की चौड़ाई */
-  height: 500px; /* पिलर की ऊंचाई */
-  overflow: hidden; /* ताकि इमेज पिलर से बाहर न निकले */
-align-items: center;
-justify-content: center;
-background-color: brown;
- 
-  border-bottom: none;
-  align-self: flex-end;
-  border-radius: 20px 20px 0 0;
-}
-
-/* 🔹 Image inside Rectangle */
-/* 🔹 Image inside Rectangle */
-.circleImage {
-  object-fit: cover; 
-  
-  /* ⚡ मुख्य बदलाव यहाँ है ⚡ */
-  /* 'center top' रखने से चेहरा हमेशा पिलर के ऊपरी-मध्य भाग में दिखेगा */
-  object-position: center 15%; 
-  
+/* 🔹 GRID WRAPPER */
+.sub_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
   width: 100%;
-  height: 100%;
-  border-radius: 20px 20px 0px 0px;
-  border-bottom: 2px solid #00ffcc;
-  filter: grayscale(20%);
-  
-  /* स्मूथ ट्रांजिशन के लिए (जब इमेज बदलेगी) */
-  transition: object-position 0.3s ease;
+  max-width: 1100px;
+  margin: auto;
+  align-items: center;
 }
-/* 🔹 TEXT CARD */
-.textDiv {
-  flex: 1;
-  max-width: 450px;
-  height: 280px;
-  padding: 30px;
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 255, 204, 0.3);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  color: #00ffcc;
-  text-align: center;
+
+/* 🔹 IMAGE CARD (PILLAR) */
+.imageDiv {
+  position: relative;
+  width: 100%;
+ 
+  height: 520px;
+  margin: 0 auto;
+  border-radius: 40px 5px 0 0; 
+  overflow: hidden;
+  align-self: flex-end;
+  background: #0a0a0a;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-bottom: none;
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.9);
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Animated Top Line Only */
+.imageDiv::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff41, transparent);
+  animation: borderBeam 3s linear infinite;
   z-index: 10;
 }
 
-/* 🔹 SCROLL WRAPPER */
+/* Cyber Scanline Effect */
+.imageDiv::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 65, 0.03) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes borderBeam {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.imageDiv:hover {
+  border-color: rgba(0, 255, 65, 0.5);
+  box-shadow: 0 -20px 60px rgba(0, 255, 65, 0.15);
+  transform: translateY(-10px);
+}
+
+/* 🔹 IMAGE STYLING */
+.circleImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+  filter: grayscale(100%) brightness(0.7);
+  transition: all 0.6s ease;
+}
+
+.imageDiv:hover .circleImage {
+  filter: grayscale(0%) brightness(1);
+  transform: scale(1.05);
+}
+
+/* 🔹 TEXT CARD */
+.textDiv {
+  width: 100%;
+  max-width: 450px;
+  height: 350px; /* Fixed height for scroll area */
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #00ff41;
+  text-align: center;
+  background: rgba(10, 10, 10, 0.4);
+  border-radius: 24px;
+  border: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+/* 🔹 SCROLL AREA */
 .scrollWrapper {
   flex: 1;
   overflow: hidden;
   mask-image: linear-gradient(transparent, black 20%, black 80%, transparent);
 }
 
-
+.scrollContent {
+  display: flex;
+  flex-direction: column;
+  animation: scrollUp 15s linear infinite;
+}
 
 .scrollContent h1 {
   font-size: 28px;
   font-weight: 800;
   margin: 15px 0;
   text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.scrollWrapper:hover .scrollContent {
-  animation-play-state: paused;
-}
-
-.scrollContent {
-  display: flex;
-  flex-direction: column;
-  /* 15s को आप अपनी पसंद के अनुसार धीमा या तेज़ कर सकते हैं */
-  animation: scrollUp 15s linear infinite; 
+  letter-spacing: 3px;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 @keyframes scrollUp {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    /* -50% ही रखें, इससे गैप खत्म हो जाएगा */
-    transform: translateY(-50%); 
-  }
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
 }
 
-/* 📱 MOBILE RESPONSIVE (The "Better UI" Logic) */
+/* 📱 MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .container {
-    flex-direction: column;
-    justify-content: flex-end; /* Everything pushes to bottom */
-    padding: 20px;
-    gap: 0;
+    padding: 80px 15px 40px 15px; /* Top space for navbar */
   }
 
+  .sub_container {
+    grid-template-columns: 1fr; /* Single column */
+    gap: 30px;
+
+   
+    padding: 20px 0px 0px 0px
+  }
+
+  /* Image First on Mobile */
+  .imageDiv {
+    order: 1; 
+    width: 85%;
+    height: 350px;
+  }
+
+  /* Text Below Image */
   .textDiv {
-    width: 100%;
-    max-width: 90%;
-    height: 200px;
-    margin-bottom: -20px; /* Pillar ke thoda upar overlap logic */
-    transform: translateY(10px);
-    padding: 15px;
+
+    /* padding: 50px 0px 0px 0px; */
+    order: 2;
+    width: 90%;
+    height: 50vh;
+
+    background-color: #00ff41;
+    padding: 20px;
+    background: transparent;
+    border: none;
+margin: auto;
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+
+  }
+
+  .scrollWrapper{
+    margin: 30px 0px 0px 0px;
+   
+  
   }
 
   .scrollContent h1 {
     font-size: 20px;
-    margin: 10px 0;
-  }
 
-  .imageDiv {
-    width: 85%; /* Mobile par pillar ki width adjustable */
-    
-    height: 330px;
-    margin: auto;
-    margin-bottom: 15px;
-    z-index: 5;
-  }
 
-  .circleImage {
-    height: 180px;
+  
   }
 }

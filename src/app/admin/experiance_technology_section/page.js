@@ -4,156 +4,179 @@ import { useState, useEffect } from "react";
 import styles from "./experience_technology_section.module.css";
 
 export default function AdminPage() {
-  const [form, setForm] = useState({
-    title: "",
-    subtitle: "",
-    experience: "",
-    projects: "",
-    technologies: [{ name: "", icon: "" }]
-  });
+  const [mainForm, setMainForm] = useState({ title: "", subtitle: "", experience: "", projects: "" });
+  const [techForm, setTechForm] = useState({ name: "", icon: "" });
+  const [previewData, setPreviewData] = useState(null);
+  const [allTechs, setAllTechs] = useState([]);
+  const [isMainDisabled, setIsMainDisabled] = useState(false);
 
-  const [previewData, setPreviewData] = useState([]);
-  const [isDisabled, setIsDisabled] = useState(false); // 🔹 form disable flag
-
-  // 🔹 Fetch latest data on mount safely
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("/api/get_who_i_am");
-        if (!res.ok) throw new Error("Network response not ok");
-        const data = await res.json();
-
-        if (data?.success && data?.data) {
-          setPreviewData([data.data]); // latest document
-          setIsDisabled(true);          // disable form if data exists
-        } else {
-          setPreviewData([]);
-          setIsDisabled(false);         // enable form if DB empty
-        }
-      } catch (err) {
-        console.error("Error fetching preview data:", err);
-        setPreviewData([]);
-        setIsDisabled(false);           // API fail → enable form
+  // 🔹 Fetch Data independently
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch("/api/get_who_i_am");
+      const data = await res.json();
+      if (data?.success && data?.data) {
+        setPreviewData(data.data);
+        setIsMainDisabled(true);
       }
-    }
-    fetchData();
+    } catch (err) { console.error("Profile fetch error"); }
+  };
+
+  const fetchTechs = async () => {
+    try {
+      const res = await fetch("/api/get_technology");
+      const data = await res.json();
+      if (data?.success) setAllTechs(data.data);
+    } catch (err) { console.error("Tech fetch error"); }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    fetchTechs();
   }, []);
 
-  // 🔹 input change
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
-  // 🔹 tech change
-  function handleTechChange(index, field, value) {
-    const updated = [...form.technologies];
-    updated[index][field] = value;
-    setForm({ ...form, technologies: updated });
-  }
-
-  // 🔹 icon file change → base64
-  function handleIconChange(index, file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => handleTechChange(index, "icon", reader.result);
-    reader.readAsDataURL(file);
-  }
-
-  // ➕ add tech
-  function addTech() {
-    if (isDisabled) return;
-    setForm({
-      ...form,
-      technologies: [...form.technologies, { name: "", icon: "" }]
+  // 🚀 Save Main Profile
+  async function handleMainSubmit(e) {
+    e.preventDefault();
+    if (!mainForm.title) return alert("Title is required");
+    const res = await fetch("/api/upload_who_i_am", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mainForm),
     });
+    const data = await res.json();
+    if (data.success) {
+      setPreviewData(data.data);
+      setIsMainDisabled(true);
+    }
   }
 
-  // ❌ remove tech
-  function removeTech(index) {
-    if (isDisabled) return;
-    const updated = form.technologies.filter((_, i) => i !== index);
-    setForm({ ...form, technologies: updated });
-  }
-
-  // 🚀 submit → API
-  async function handleSubmit() {
-    if (isDisabled) return;
+  // 🗑️ DELETE Profile (Fixed Logic)
+  async function handleDeleteMainProfile(e) {
+    e.stopPropagation(); // Click event ko bahar jane se roko
+    if (!confirm("Are you sure you want to delete profile info?")) return;
+    
     try {
-      const res = await fetch("/api/upload_who_i_am", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await fetch("/api/delete_who_i_am", { method: "DELETE" });
       const data = await res.json();
-      if (data?.success) {
-        alert("✅ Data Saved!");
-        setPreviewData([form]);
-        setIsDisabled(true);  // disable form after save
-        setForm({
-          title: "",
-          subtitle: "",
-          experience: "",
-          projects: "",
-          technologies: [{ name: "", icon: "" }],
-        });
-      } else {
-        alert("❌ Error saving data");
+      
+      if (data.success) {
+        // Sirf profile state ko reset karo, allTechs ko nahi
+        setPreviewData(null);
+        setIsMainDisabled(false);
+        setMainForm({ title: "", subtitle: "", experience: "", projects: "" });
+        alert("Profile info deleted successfully!");
       }
     } catch (err) {
-      console.error(err);
-      alert("❌ Network error");
+      alert("Error deleting profile");
     }
+  }
+
+  // 🚀 Upload Tech
+  async function handleTechSubmit(e) {
+    e.preventDefault();
+    if (!techForm.name || !techForm.icon) return alert("Fill tech details");
+    const res = await fetch("/api/upload_technology", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(techForm),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setAllTechs((prev) => [data.data, ...prev]);
+      setTechForm({ name: "", icon: "" });
+    }
+  }
+
+  // 🗑️ DELETE Tech Icon
+  async function handleDeleteTech(e, id) {
+    e.stopPropagation();
+    if (!confirm("Delete icon?")) return;
+    
+    try {
+      const res = await fetch(`/api/delete_technology?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        setAllTechs((prev) => prev.filter((t) => t._id !== id));
+      }
+    } catch (err) {
+      alert("Error deleting tech");
+    }
+  }
+
+  function handleIconChange(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => setTechForm({ ...techForm, icon: reader.result });
+    reader.readAsDataURL(file);
   }
 
   return (
     <div className={styles.container}>
-      <h2>Admin Panel</h2>
+      <h2 className={styles.title}>Experience & Technology Section</h2>
+      
       <div className={styles.sectionsWrapper}>
-
-        {/* Left Side - Form */}
+        
+        {/* LEFT: FORMS */}
         <div className={styles.formSection}>
-          <h3>Add / Edit Data</h3>
-
-          <input name="title" placeholder="Title" value={form.title} onChange={handleChange} className={styles.input} disabled={isDisabled} />
-          <input name="subtitle" placeholder="Subtitle" value={form.subtitle} onChange={handleChange} className={styles.input} disabled={isDisabled} />
-          <input name="experience" placeholder="Experience (1Y+)" value={form.experience} onChange={handleChange} className={styles.input} disabled={isDisabled} />
-          <input name="projects" placeholder="Projects (10+)" value={form.projects} onChange={handleChange} className={styles.input} disabled={isDisabled} />
-
-          <h4>Technologies</h4>
-          {form.technologies.map((tech, i) => (
-            <div key={i} className={styles.techRow}>
-              <input placeholder="Name (React)" value={tech.name} onChange={(e) => handleTechChange(i, "name", e.target.value)} className={styles.input} disabled={isDisabled} />
-              <input type="file" accept="image/*" onChange={(e) => handleIconChange(i, e.target.files?.[0])} className={styles.input} disabled={isDisabled} />
-              <button onClick={() => removeTech(i)} className={styles.deleteButton} disabled={isDisabled}>❌</button>
+          <div className={`${styles.formCard} ${isMainDisabled ? styles.locked : ""}`}>
+            <h3>{isMainDisabled ? "✅ Profile Locked" : "📝 Edit Profile Info"}</h3>
+            <input className={styles.input} placeholder="Title" value={mainForm.title} onChange={(e) => setMainForm({...mainForm, title: e.target.value})} disabled={isMainDisabled} />
+            <input className={styles.input} placeholder="Subtitle" value={mainForm.subtitle} onChange={(e) => setMainForm({...mainForm, subtitle: e.target.value})} disabled={isMainDisabled} />
+            <div className={styles.row}>
+              <input className={styles.input} placeholder="Exp" value={mainForm.experience} onChange={(e) => setMainForm({...mainForm, experience: e.target.value})} disabled={isMainDisabled} />
+              <input className={styles.input} placeholder="Proj" value={mainForm.projects} onChange={(e) => setMainForm({...mainForm, projects: e.target.value})} disabled={isMainDisabled} />
             </div>
-          ))}
+            {!isMainDisabled && <button onClick={handleMainSubmit} className={styles.saveBtn}>Save Details</button>}
+          </div>
 
-          <button onClick={addTech} className={styles.button} disabled={isDisabled}>➕ Add Technology</button>
-          <br /><br />
-          <button onClick={handleSubmit} className={styles.button} disabled={isDisabled}>🚀 Save Data</button>
+          <div className={styles.formCard} style={{ marginTop: '20px' }}>
+            <h3>🚀 Add Technology</h3>
+            <input className={styles.input} placeholder="Name" value={techForm.name} onChange={(e) => setTechForm({...techForm, name: e.target.value})} />
+            <input className={styles.input} type="file" onChange={(e) => handleIconChange(e.target.files?.[0])} />
+            <button onClick={handleTechSubmit} className={styles.techBtn}>Upload Icon</button>
+          </div>
         </div>
 
-        {/* Right Side - Preview */}
+        {/* RIGHT: PREVIEW (Yahan alag alag sections hain) */}
         <div className={styles.previewSection}>
-          <h3>Preview / Uploaded Data</h3>
-          {previewData.length === 0 ? <p>No data uploaded yet.</p> :
-            previewData.map((item, idx) => (
-              <div key={idx} className={styles.previewCard}>
-                <h4>{item.title}</h4>
-                <p>{item.subtitle}</p>
-                <p>{item.experience}</p>
-                <p>{item.projects}</p>
-                <h5>Technologies:</h5>
-                <ul>
-                  {item.technologies?.map((tech, tIdx) => (
-                    <li key={tIdx}>
-                      {tech.name} {tech.icon && <img src={tech.icon} width={24} height={24} alt={tech.name} />}
-                    </li>
-                  ))}
-                </ul>
+          <h3 className={styles.previewHeading}>Live Preview</h3>
+          
+          {/* Section 1: Profile (Independent) */}
+          <div style={{minHeight: '150px', marginBottom: '30px'}}>
+            {previewData ? (
+              <div className={styles.modernPreviewCard}>
+                <button onClick={(e) => handleDeleteMainProfile(e)} className={styles.floatingDeleteMain}>🗑️</button>
+                <div className={styles.cardGlow}></div>
+                <h2>{previewData.title}</h2>
+                <p>{previewData.subtitle}</p>
+                <div className={styles.statsContainer}>
+                  <div className={styles.statBox}><span>{previewData.experience}</span><label>Exp</label></div>
+                  <div className={styles.statBox}><span>{previewData.projects}+</span><label>Projects</label></div>
+                </div>
               </div>
-            ))
-          }
+            ) : (
+              <div className={styles.emptyPreview}>Profile deleted. Forms are now editable.</div>
+            )}
+          </div>
+
+          {/* Section 2: Technology (Independent) */}
+          <div className={styles.techPreviewArea}>
+            <h4 style={{ color: '#fff', marginBottom: '15px' }}>Technologies Bank ({allTechs.length})</h4>
+            <div className={styles.modernTechGrid}>
+              {allTechs.length > 0 ? (
+                allTechs.map((tech) => (
+                  <div key={tech._id} className={styles.modernTechItem}>
+                    <button onClick={(e) => handleDeleteTech(e, tech._id)} className={styles.techDeleteBadge}>×</button>
+                    <img src={tech.icon} alt={tech.name} />
+                    <span>{tech.name}</span>
+                  </div>
+                ))
+              ) : (
+                <p style={{ color: '#666' }}>No icons uploaded yet.</p>
+              )}
+            </div>
+          </div>
         </div>
 
       </div>

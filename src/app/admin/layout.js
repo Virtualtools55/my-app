@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }) {
           <nav className={style.nav_links}>
             <Link href="/admin/introUpload">Intro Upload</Link>
             <Link href="/admin/experiance_technology_section">Experience & technology section</Link>
-            <Link href="/admin">Dashboard</Link>
+            <Link href="/admin/upload_MyProjects">Upload Projects</Link>
             <Link href="/admin/">Logout</Link>
           </nav>
         </div>

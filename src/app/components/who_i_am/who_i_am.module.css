@@ -1,203 +1,164 @@
 .container {
-  width: 90vw;
+  width: 95vw;
   max-width: 1200px;
   margin: auto;
-  padding: 40px 20px;
+  padding: 60px 20px;
+  background: transparent;
 }
 
-/* 🔥 TOP CARD */
+/* 🔹 SECTION TITLE */
+.Technology {
+  height: 60px;
+  width: fit-content;
+  padding: 0 30px;
+  background: rgba(0, 255, 65, 0.1);
+  border-left: 4px solid #00ff41;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  margin: 0 0 40px 0;
+  color: #00ff41;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* 🔥 TOP CARD (Who I Am) */
 .topCard {
   min-height: 200px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  overflow: hidden;
-  padding: 30px;
+  padding: 40px;
   border-radius: 20px;
-  color: white;
-
-  margin-bottom: 25px;
-
-    background: radial-gradient(
-    circle at top,
-    rgba(0, 255, 255, 0.15),
-    rgba(10, 20, 30, 0.9)
-  );
-
+  background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-
-  background-color: rgba(15, 32, 39, 0.6);
-  border: 1px solid rgba(0, 255, 255, 0.2);
-
-  color: white;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  margin-bottom: 40px;
   position: relative;
+  overflow: hidden;
+}
+
+.topCard h2 {
+  color: #00ff41;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.topCard p {
+  color: #e6edf3;
+  max-width: 500px;
+  line-height: 1.6;
+  opacity: 0.8;
 }
 
 /* 🔥 STATS */
 .stats {
-  position: absolute;
-  height: 100%;
-  width: 40%;
-  right: 40px;
-
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: center;
-  text-align: center;
-  gap: 20px; /* 🔥 important */
+  gap: 20px;
+  width: 40%;
 }
 
-/* STAT BOX */
 .state1, .state2 {
   display: flex;
-  margin: auto;
-
-  height: 90%;
-  width: 90%;
-
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-
- background: radial-gradient(
-  circle at top,
-  rgba(0, 255, 255, 0.15),
-  rgba(10, 20, 30, 0.9)
-);
-  border-radius: 10px;
+  height: 120px;
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid rgba(0, 255, 65, 0.15);
+  border-radius: 15px;
+  transition: 0.3s;
 }
 
-/* 🔥 SKILLS */
+.state1:hover, .state2:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+}
+
+.state1 h3, .state2 h3 {
+  color: #00ff41;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.state1 span, .state2 span {
+  color: #888;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+/* 🔥 SKILLS GRID */
 .skills {
   width: 100%;
   display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Responsive columns */
+  gap: 20px;
 }
 
 /* CARD */
 .card {
-  min-height: 120px;
+  min-height: 100px;
   padding: 20px;
-
   display: flex;
+  flex-direction: column; /* Icon upar, naam niche */
+  gap: 12px;
   justify-content: center;
   align-items: center;
-
   border-radius: 15px;
-
-  background: radial-gradient(circle at top, #0f2027, #0a181e);
-  backdrop-filter: blur(10px);
-
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  color: white;
-  font-weight: 500;
-
-  transition: 0.3s;
+  background: rgba(15, 15, 15, 0.7);
+  border: 1px solid rgba(0, 255, 65, 0.1);
+  color: #fff;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
 }
 
-/* ========================= */
-/* 📱 TABLET RESPONSIVE */
-/* ========================= */
-@media (max-width: 1200px) {
-  .stats {
-    width: 45%;
-    right: 20px;
-  }
+.card:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.15);
 }
 
-@media (max-width: 1024px) {
-   .container {
-    width: 95vw;
-    padding: 20px 10px;
-  }
-
-  .topCard {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-  }
-
-  /* 🔥 biggest fix */
-  .stats {
-    position: static;   /* ❗ absolute हटाओ */
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  .state1, .state2 {
-    height: 80px;
-    width: 100%;
-  }
-
-  .skills {
-    grid-template-columns: 1fr;
-  }
-
+.card span {
+  font-size: 0.9rem;
+  letter-spacing: 1px;
 }
 
-@media (max-width: 992px) {
-  .container {
-    width: 95vw;
-    padding: 20px 10px;
-  }
-
-  .topCard {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-  }
-
-  /* 🔥 biggest fix */
-  .stats {
-    position: static;   /* ❗ absolute हटाओ */
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  .state1, .state2 {
-    height: 80px;
-    width: 100%;
-  }
-
-  .skills {
-    grid-template-columns: 1fr;
-  }
+.loading {
+  color: #00ff41;
+  text-align: center;
+  padding: 100px;
+  font-family: 'Courier New', monospace;
 }
 
 /* ========================= */
 /* 📱 MOBILE RESPONSIVE */
 /* ========================= */
-@media (max-width: 768px) {
-  .container {
-    width: 95vw;
-    padding: 20px 10px;
-  }
-
+@media (max-width: 1024px) {
   .topCard {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
+    text-align: center;
+    gap: 30px;
   }
-
-  /* 🔥 biggest fix */
   .stats {
-    position: static;   /* ❗ absolute हटाओ */
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  .state1, .state2 {
-    height: 80px;
     width: 100%;
   }
+}
 
+@media (max-width: 768px) {
   .skills {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr); /* Mobile par 2 columns */
+  }
+  .topCard h2 {
+    font-size: 1.5rem;
   }
 }

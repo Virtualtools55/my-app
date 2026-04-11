@@ -1,88 +1,163 @@
-.container {
+.servicesSection {
+  box-sizing: border-box;
   background-color: #050505;
+  /* Padding mobile par kam aur desktop par zyada */
+  padding: clamp(40px, 8vw, 100px) 15px;
   min-height: 100vh;
-  padding: 50px 20px;
   font-family: 'Courier New', Courier, monospace;
-}
-
-.glitchTitle {
   color: #00ff41;
-  text-align: center;
-  margin-bottom: 50px;
-  font-size: 1.8rem;
-  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-.prefix { color: #888; margin-right: 10px; font-size: 1.2rem; }
+.header {
+  text-align: center;
+  margin-bottom: clamp(40px, 10vw, 80px);
+}
 
-.grid {
+.glitch {
+  /* Font size screen ke hisaab se adjust hoga */
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+  position: relative;
+  word-break: break-word; /* Long titles wont overflow */
+}
+
+/* Grid Layout: Responsive adjustments */
+.servicesGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Desktop: 2 boxes */
-  gap: 30px;
-  max-width: 1100px;
+  /* Desktop: 2 boxes, Tablet/Mobile: 1 box */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(20px, 4vw, 40px);
+  max-width: 1200px;
   margin: 0 auto;
 }
 
+/* Medium Screens (Tablets) ke liye 2 column barkrar rakhne ke liye */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .servicesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .serviceBox {
-  background: rgba(0, 255, 65, 0.02);
-  border: 1px solid #00ff41;
-  padding: 25px;
   position: relative;
-  transition: all 0.3s ease;
+  /* Height ko fixed se hata kar min-height kiya taaki content overflow na ho */
+  min-height: 280px; 
+  height: auto;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  background: rgba(0, 20, 0, 0.4);
   overflow: hidden;
-}
-
-.serviceBox:hover {
-  background: rgba(0, 255, 65, 0.08);
-  box-shadow: 0 0 25px rgba(0, 255, 65, 0.2);
-  transform: translateY(-5px);
-}
-
-.cardHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
-  padding-bottom: 10px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  background: #00ff41;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #00ff41;
+.bgImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(1) blur(3px) brightness(0.2);
+  transition: all 0.5s ease;
+  z-index: 1;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg, 
+    rgba(5, 5, 5, 0.95) 0%, 
+    rgba(0, 255, 65, 0.05) 100%
+  );
+  z-index: 2;
+}
+
+.content {
+  position: relative;
+  z-index: 3;
+  padding: clamp(20px, 5vw, 40px); /* Responsive padding */
+  width: 100%;
 }
 
 .serviceTitle {
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  margin-bottom: 20px;
   color: #00ff41;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.pointsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 4 points in 2x2 grid */
-  gap: 15px;
+.neonText {
+  color: #fff;
+  text-shadow: 0 0 10px #00ff41;
+  animation: blink 2s infinite;
+}
+
+.pointsList {
   list-style: none;
   padding: 0;
+  display: grid;
+  /* Default 1 column (mobile), Desktop 2 columns */
+  grid-template-columns: 1fr; 
+  gap: 12px;
+}
+
+/* Tablets aur Desktop par points 2 columns mein dikhenge */
+@media (min-width: 480px) {
+  .pointsList {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .pointItem {
-  color: #ffffff;
-  font-size: 0.9rem;
+  color: #e0e0e0;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  display: flex;
+  align-items: flex-start; /* Long points stack properly */
+  gap: 8px;
 }
 
-.terminalIcon { color: #00ff41; margin-right: 5px; }
+.bullet {
+  color: #00ff41;
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr; /* Mobile: 1 box */
+/* Hover Effects (Only for devices with mouse) */
+@media (hover: hover) {
+  .serviceBox:hover {
+    transform: scale(1.02);
+    border-color: #00ff41;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
   }
-  .pointsGrid {
-    grid-template-columns: 1fr; /* Mobile: points also stack */
+  .serviceBox:hover .bgImage {
+    filter: grayscale(0.5) blur(1px) brightness(0.4);
+    transform: scale(1.05);
+  }
+}
+
+/* 📱 FINAL MOBILE OVERFLOW FIXES */
+@media (max-width: 480px) {
+  .servicesSection {
+
+    box-sizing: border-box;
+    padding: 40px 10px;
+  }
+  .serviceBox {
+    min-height: 250px;
+  }
+  .content {
+    padding: 20px;
+  }
+  .pointsList {
+    grid-template-columns: 1fr; /* Force 1 column on very small screens */
   }
 }

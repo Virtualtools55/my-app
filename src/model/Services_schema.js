@@ -1,8 +1,18 @@
 import mongoose from "mongoose";
 
 const ServiceSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  points: [{ type: String }], // Charo points array mein jayenge
+  title: { 
+    type: String, 
+    required: true 
+  },
+  points: [
+    { type: String }
+  ], 
+  bgImage: { 
+    type: String // 👈 Yeh add karna zaroori tha image URL store karne ke liye
+  }
 }, { timestamps: true });
 
-export default mongoose.models.Services || mongoose.model("Services", ServiceSchema);
+// Check karein ki model pehle se register toh nahi hai
+const Service = mongoose.models.Services || mongoose.model("Services", ServiceSchema);
+export default Service;

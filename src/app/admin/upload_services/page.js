@@ -7,7 +7,7 @@ export default function AdminServices() {
   const [form, setForm] = useState({ title: "", p1: "", p2: "", p3: "", p4: "", bgImage: "" });
 
   const fetchServices = async () => {
-    const res = await fetch("/api/services");
+    const res = await fetch("/api/get_services");
     const data = await res.json();
     if (data.success) setServices(data.data);
   };
@@ -22,7 +22,7 @@ export default function AdminServices() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/services", {
+    const res = await fetch("/api/upload_services", {
       method: "POST",
       body: JSON.stringify({
         title: form.title,
@@ -38,7 +38,7 @@ export default function AdminServices() {
 
   const handleDelete = async (id) => {
     if (!confirm("Destroy service node?")) return;
-    await fetch(`/api/services?id=${id}`, { method: "DELETE" });
+    await fetch(`/api/delete_services?id=${id}`, { method: "DELETE" });
     fetchServices();
   };
 

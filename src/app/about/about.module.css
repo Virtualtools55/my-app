@@ -1,0 +1,101 @@
+.aboutContainer {
+  background-color: #050505;
+  padding: 80px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.terminalWindow {
+  width: 100%;
+  max-width: 750px;
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid #00ff41;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.terminalHeader {
+  background: #1a1a1a;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.buttons span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.close { background: #ff5f56; }
+.minimize { background: #ffbd2e; }
+.maximize { background: #27c93f; }
+
+.title {
+  color: #888;
+  font-size: 0.8rem;
+  margin-left: 20px;
+}
+
+.terminalBody {
+  padding: 30px;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+.command {
+  color: #00ff41;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.highlight {
+  color: #00ff41;
+  font-weight: bold;
+}
+
+.commitment {
+  margin-top: 25px;
+  padding: 15px;
+  background: rgba(0, 255, 65, 0.05);
+  border-left: 3px solid #00ff41;
+}
+
+.prefix {
+  color: #00ff41;
+  margin-right: 10px;
+}
+
+.neon {
+  color: #fff;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+.status {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.blink {
+  color: #00ff41;
+  animation: blinkAnim 1.5s infinite;
+}
+
+@keyframes blinkAnim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (max-width: 600px) {
+  .terminalBody { padding: 15px; }
+}

@@ -19,9 +19,9 @@ export default function Footer() {
           </div>
 
           <div className={styles.links}>
-            <a href="https://github.com" target="_blank" className={styles.link}>GITHUB</a>
-            <a href="https://linkedin.com" target="_blank" className={styles.link}>LINKEDIN</a>
-            <a href="/resume" className={styles.link}>RESUME</a>
+            <a href="https://github.com/Virtualtools55" target="_blank" className={styles.link}>GITHUB</a>
+            <a href="https://www.linkedin.com/in/ankit-kumar-a4b8a8402/" target="_blank" className={styles.link}>LINKEDIN</a>
+            
           </div>
         </div>
 

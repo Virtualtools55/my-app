@@ -1,0 +1,91 @@
+.adminContainer {
+  background: #050505;
+  color: #00ff41;
+  padding: 40px;
+  min-height: 100vh;
+  font-family: monospace;
+}
+
+.formCard {
+  background: #111;
+  border: 1px dashed #00ff41;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.formCard input {
+  background: black;
+  border: 1px solid #333;
+  color: #00ff41;
+  padding: 10px;
+}
+
+.previewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Desktop: 2 boxes */
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .previewGrid { grid-template-columns: 1fr; } /* Mobile: 1 box */
+}
+
+.serviceBox {
+  height: 250px;
+  position: relative;
+  border: 1px solid #00ff41;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Background Blur Effect */
+.serviceBox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: blur(4px); /* Blur intensity */
+  transform: scale(1.1);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6); /* Dark layer over image */
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  padding: 15px;
+}
+
+.title { font-size: 1.5rem; margin-bottom: 15px; text-transform: uppercase; }
+
+.points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 0.8rem;
+  gap: 10px;
+  color: #fff;
+}
+
+.delBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}

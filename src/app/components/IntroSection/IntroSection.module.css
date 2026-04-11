@@ -1,7 +1,9 @@
 /* 🔹 MAIN CONTAINER */
 .container {
-  min-height: 100vh;
+ height: 100%;
   width: 100%;
+box-sizing: border-box;
+background-color: red;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,6 +14,8 @@
 
 /* 🔹 GRID WRAPPER */
 .sub_container {
+ 
+ 
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 50px;
@@ -93,7 +97,7 @@
   width: 100%;
   max-width: 450px;
   height: 350px; /* Fixed height for scroll area */
-  padding: 30px;
+  /* padding: 30px; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -133,9 +137,14 @@
 
 /* 📱 MOBILE RESPONSIVE */
 @media (max-width: 768px) {
-  .container {
-    padding: 80px 15px 40px 15px; /* Top space for navbar */
-  }
+   .container {
+
+    box-sizing: border-box;
+    height: 100dvh;
+    width: 100dvw;
+    background-color: red;
+     padding: 80px 15px 40px 15px; /*fTop space for navbar  */
+   }
 
   .sub_container {
     grid-template-columns: 1fr; /* Single column */

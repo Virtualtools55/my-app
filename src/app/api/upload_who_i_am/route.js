@@ -14,15 +14,12 @@ export async function POST(req) {
     await dbConnect();
     const body = await req.json();
 
-    // Frontend के fields को यहाँ निकालें
+    // 1. Destructuring mein 'subtitle' ko pakdein (kyunki frontend yahi bhej raha hai)
     const { title, subtitle, experience, projects, technologies } = body;
 
-    // 1. Technologies के Icons को ImageKit पर अपलोड करना
     const uploadedTech = await Promise.all(
       (technologies || []).map(async (tech) => {
         let iconUrl = tech.icon;
-        
-        // अगर icon base64 format में है, तभी अपलोड करें
         if (tech.icon && tech.icon.startsWith("data:")) {
           const uploadRes = await imagekit.upload({
             file: tech.icon,
@@ -31,18 +28,16 @@ export async function POST(req) {
           });
           iconUrl = uploadRes.url;
         }
-        
         return { name: tech.name, icon: iconUrl };
       })
     );
 
-    // 2. Mongoose में सेव करना 
-    // (सुनिश्चित करें कि आपके Schema में ये fields मौजूद हैं)
+    // 2. Mongoose create mein mappings check karein
     const newEntry = await WhoIAm.create({
       title,
-      description: subtitle, // यहाँ 'subtitle' को 'description' की जगह यूज़ कर रहे हैं
-      experience,
-      projects: Number(projects),
+      subtitle: subtitle || "", // Frontend ka 'subtitle' schema ke 'description' mein jayega
+      experience: String(experience || ""), 
+      projects: String(projects || ""),  // Ab koi Cast Error nahi aayega
       technologies: uploadedTech,
     });
 

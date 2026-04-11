@@ -1,19 +1,16 @@
+// middleware.js
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
 export function middleware(req) {
   const token = req.cookies.get("token")?.value;
 
   if (req.nextUrl.pathname.startsWith("/admin")) {
+    // Agar token nahi hai, toh seedha login par bhej do
     if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
-
-    try {
-      jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+    // Agar token hai, toh Next.js ko aage badhne do (Verification Page par hogi)
+    return NextResponse.next();
   }
 
   return NextResponse.next();

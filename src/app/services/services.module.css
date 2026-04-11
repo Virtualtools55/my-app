@@ -1,0 +1,88 @@
+.container {
+  background-color: #050505;
+  min-height: 100vh;
+  padding: 50px 20px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.glitchTitle {
+  color: #00ff41;
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 1.8rem;
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+.prefix { color: #888; margin-right: 10px; font-size: 1.2rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Desktop: 2 boxes */
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.serviceBox {
+  background: rgba(0, 255, 65, 0.02);
+  border: 1px solid #00ff41;
+  padding: 25px;
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.serviceBox:hover {
+  background: rgba(0, 255, 65, 0.08);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.2);
+  transform: translateY(-5px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+  padding-bottom: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff41;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff41;
+}
+
+.serviceTitle {
+  color: #00ff41;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pointsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 4 points in 2x2 grid */
+  gap: 15px;
+  list-style: none;
+  padding: 0;
+}
+
+.pointItem {
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.terminalIcon { color: #00ff41; margin-right: 5px; }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr; /* Mobile: 1 box */
+  }
+  .pointsGrid {
+    grid-template-columns: 1fr; /* Mobile: points also stack */
+  }
+}

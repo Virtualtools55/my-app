@@ -152,7 +152,7 @@ export default function AdminPage() {
                 <p>{previewData.subtitle}</p>
                 <div className={styles.statsContainer}>
                   <div className={styles.statBox}><span>{previewData.experience}</span><label>Exp</label></div>
-                  <div className={styles.statBox}><span>{previewData.projects}+</span><label>Projects</label></div>
+                  <div className={styles.statBox}><span>{previewData.projects}</span><label>Projects</label></div>
                 </div>
               </div>
             ) : (

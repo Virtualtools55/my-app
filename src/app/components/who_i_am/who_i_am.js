@@ -49,7 +49,7 @@ return (
       <div className={styles.topCard}>
         <div>
           <h2>{profileData.title}</h2>
-          <p>{profileData.description || profileData.subtitle}</p>
+          <p>{profileData.subtitle || profileData.subtitle}</p>
         </div>
 
         <div className={styles.stats}>
@@ -58,7 +58,7 @@ return (
             <span>Experience</span>
           </div>
           <div className={styles.state2}>
-            <h3>{profileData.projects}+</h3>
+            <h3>{profileData.projects}</h3>
             <span>Projects</span>
           </div>
         </div>

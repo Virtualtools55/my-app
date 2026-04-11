@@ -5,11 +5,11 @@ import style from "./admin.module.css";
 
 export default async function AdminLayout({ children }) {
 
-  // 🔐 Cookie Check
+  // 🔐 Cookie Check - Naam wahi rakhein jo backend/middleware mein hai
   const cookieStore = await cookies();
-  const isAdmin = cookieStore.get("admin");
+  const token = cookieStore.get("token"); // 'admin' ki jagah 'token' karein
 
-  if (!isAdmin) {
+  if (!token) {
     redirect("/login");
   }
 
@@ -27,7 +27,9 @@ export default async function AdminLayout({ children }) {
             <Link href="/admin/introUpload">Intro Upload</Link>
             <Link href="/admin/experiance_technology_section">Experience & technology section</Link>
             <Link href="/admin/upload_MyProjects">Upload Projects</Link>
-            <Link href="/admin/">Logout</Link>
+            {/* Logout ke liye ek alag logic banana hoga, abhi ke liye ye bas redirect karega */}
+            <Link href="/admin/upload_services">Services</Link> 
+            <Link href="/login">Logout</Link> 
           </nav>
         </div>
       </div>

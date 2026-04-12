@@ -44,16 +44,23 @@ export default function IntroSection() {
       <div className={styles.sub_container}>
         
         {/* 🔹 इमेज पिलर सेक्शन */}
-        <div className={styles.imageDiv}>
-          {images.length > 0 && (
-            <Image
-              src={images[currentIndex].image_url}
-              alt="Profile Slider"
-              fill
-              priority
-              className={styles.circleImage}
-            />
-          )}
+       <div className={styles.imageDiv}>
+  {images.length > 0 && images[currentIndex] && (
+    <Image
+      // ✅ Yahan check karein: imageUrl hai ya image_url? 
+      // Dono ko handle karne ke liye niche wala logic best hai:
+      src={images[currentIndex].imageUrl || images[currentIndex].image_url || null}
+      
+      alt="Profile Slider"
+      fill
+      priority
+      className={styles.circleImage}
+      
+      // ✅ Agar image load na ho to error handle karne ke liye
+      onError={(e) => console.error("Image load failed")}
+    />
+  )}
+
         </div>
 
         {/* 🔹 रोलर टेक्स्ट सेक्शन */}

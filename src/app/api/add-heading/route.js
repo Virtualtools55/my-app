@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
+import dbConnect from "@/lib/db"; // Aapki mongoose connection file
+import mongoose from "mongoose";
 
 export async function POST(req) {
   try {
@@ -10,29 +11,36 @@ export async function POST(req) {
       return NextResponse.json({
         success: false,
         message: "Heading text is required",
-      });
+      }, { status: 400 });
     }
 
-    // 🔥 Mongo connect
-    const client = await clientPromise;
-    const db = client.db("portfolio"); // 👉 DB name change कर सकते हो
+    // 1. 🔥 Mongoose se connect karein
+    await dbConnect();
 
-    const result = await db.collection("headings_text").insertOne({
+    // 2. Direct Collection use karein (Mongoose ke connection ke through)
+    // Ye line client.db() ka sahi alternative hai Mongoose mein
+    const db = mongoose.connection.db; 
+
+    const result = await db.collection("heading_texts").insertOne({
       text: text.trim(),
       createdAt: new Date(),
     });
 
     return NextResponse.json({
       success: true,
-      data: result,
+      message: "Heading added successfully",
+      data: {
+        _id: result.insertedId,
+        text: text.trim()
+      },
     });
 
   } catch (error) {
     console.error("API ERROR:", error);
-
     return NextResponse.json({
       success: false,
       message: "Server Error",
-    });
+      details: error.message
+    }, { status: 500 });
   }
 }

@@ -27,9 +27,9 @@ export default function Footer() {
 
         <div className={styles.bottomBar}>
           <p className={styles.copyright}>
-            © {currentYear} | Executed by <span className={styles.highlight}>YourName</span>
+            © {currentYear} | Executed by <span className={styles.highlight}>Ankit Kumar</span>
           </p>
-          <p className={styles.loc}>LOC: INDORE // INDIA</p>
+          <p className={styles.loc}>LOC: JABALPUR // INDIA</p>
         </div>
       </div>
     </footer>
